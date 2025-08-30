@@ -1,0 +1,557 @@
+units:
+  plateHeight: 1.5 # MX Key plate height (Ideal. Probably 1.6 if using PCB plate)
+  baseHeight: 1.5 # 3d Printed case bottom height
+  wallWidth: 2 
+  pcbHeight: 1.6 # Keyboard PCB
+  topOfPlateToTopOfPCBSwitchHeight: 5 - plateHeight # 5mm between top of plate and top of Keyboard PCB
+  mcuHeight: 7 # total with connectors and everything (closer to 5 but we want some more room)
+  lipHeight: 1 # Wall lip 
+  wallHeight: lipHeight + plateHeight + topOfPlateToTopOfPCBSwitchHeight + pcbHeight + mcuHeight + baseHeight
+  standoffHeight:  mcuHeight + baseHeight # Standoffs should account for MCU height
+
+  wallBuffer: 0.5 # buffer between wall and pcb/plate
+
+  standoffSize: 2.5 # Radius of standoff (outer)
+  screwSize: 1.5 # Radius of insert
+points:
+  zones:
+    matrix:
+      anchor:
+        shift: [50, -200] # Move into KiCAD position
+      columns:
+        reachy.key.mirror.skip: false # Add 1 column to right side (mirror)
+        reachy.key.skip: true
+        reachy.key.column_net: "GP12"
+        outer.key.stagger: 0.10U
+        outer.key.column_net: "GP11"
+        pinky.key.stagger: 0.20U
+        pinky.key.column_net: "GP10"
+        ring.key.stagger: 0.5U
+        ring.key.column_net: "GP9"
+        middle.key.stagger: 0.25U
+        middle.key.column_net: "GP8"
+        index.key.stagger: -0.25U
+        index.key.column_net: "GP7"
+        inner.key.stagger: -0.15U
+        inner.key.column_net: "GP6"
+      rows:
+        bottom.padding: U
+        bottom.bind: [0, 0, 20, 0]  # For outlines
+        bottom.row_net: "GP17"
+        home.padding: U
+        home.row_net: "GP18"
+        top.padding: U
+        top.row_net: "GP19"
+        num.padding: U
+        num.row_net: "GP20"
+    thumb:
+      anchor:
+        ref: matrix_index_bottom
+        shift: [-0.5U, -1.1U]
+        rotate: -10
+      columns:
+        tuck:
+          key.name: matrix_thumb_tuck
+          key.column_net: "GP8"
+        center:
+          key.spread: U
+          key.splay: -5
+          key.origin: [-0.5U, -1U]
+          key.name: matrix_thumb_center
+          key.column_net: "GP7"
+        reach:
+          key.spread: U
+          key.splay: -5
+          key.origin: [-0.5U, -1U]
+          key.name: matrix_thumb_reach
+          key.column_net: "GP6"
+      rows:
+        only:
+          row_net: "GP16"
+  mirror:
+    ref: matrix_pinky_home
+    distance: 250
+outlines:
+  _outline: # Starting outline of Keyboard
+    - what: rectangle
+      where: true
+      size: U+3
+    - what: rectangle
+      where: /._inner_bottom/
+      bound: true
+      size: U+3
+    - what: rectangle
+      where: /._index_bottom/
+      bound: true
+      size: U
+  _janky_piece: # Janky piece to make a nice rounded shape
+    - what: outline
+      name: _outline
+    - what: rectangle
+      where: /.atrix_thumb_tuck/
+      size: [5U, 3U]
+      adjust:
+        shift: [-30, -10]
+    - what: circle
+      radius: 350
+      where:
+        ref: mirror_matrix_thumb_tuck
+        shift: [-3.7, -361.2]
+      operation: subtract
+    - what: circle
+      radius: 350
+      where:
+        ref: matrix_thumb_tuck
+        shift: [-3.7, -361.2]
+      operation: subtract
+    - what: rectangle
+      size: [1U, 10U]
+      where:
+        ref: matrix_outer_bottom
+        shift: [-1U-1.6, 0]
+      operation: subtract
+  outline: # The real keyboard outline
+    - what: outline
+      name: _outline
+    - what: outline
+      name: _janky_piece
+      operation: add
+      fillet: 2
+  _outline_buffer:  # With a wallbuffer
+    - what: outline
+      name: outline
+      expand: wallBuffer
+
+  representation: # How will the keyboard look? 18 is the size of a complete MX key (unit: u)
+    - what: outline
+      name: outline
+    - what: rectangle
+      where: true
+      size: 18
+      operation: subtract
+
+  mx_plate_cutout: # MX plate cutout. No fancy stuff here
+    - what: rectangle
+      size: 14
+      fillet: 0.5 # Add fillet since PCB has to be manifactured with rounded corners
+      
+  outline_right:  # Get right side by removing left side
+  - what: outline
+    name: outline
+  - what: rectangle 
+    size: 10U
+    where:
+      ref: matrix_middle_home
+    operation: subtract
+
+  outline_left:  # Vise vera
+  - what: outline
+    name: outline
+  - what: rectangle
+    size: 10U
+    operation: subtract
+    where:
+      ref: mirror_matrix_middle_home
+
+  _outline_XL: # Create an outline for walls. 
+    - what: outline
+      name: outline
+      expand: wallWidth + wallBuffer
+    - what: outline
+      name: _outline_buffer
+      operation: subtract
+
+  outline_right_walls: # Remove left side to get right walls
+  - what: outline
+    name: _outline_XL
+  - what: rectangle 
+    size: 10U
+    where:
+      ref: matrix_middle_home
+    operation: subtract
+
+  outline_left_walls:  # Vise versa
+  - what: outline
+    name: _outline_XL
+  - what: rectangle
+    size: 10U
+    operation: subtract
+    where:
+      ref: mirror_matrix_middle_home
+
+  _holes_left: # Mounting holes (for standoffs)
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_ring_home
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_thumb_reach
+      shift: [-0.5U, -0.2U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_index_num
+      shift: [0, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_index_home
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_outer_num
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: matrix_outer_home
+      shift: [0U, -0.5U]
+  
+  _standoff_left: # Expand the holes to get the standoff dimentions right
+  - what: outline
+    name: _holes_left
+    expand: standoffSize - screwSize
+  - what: outline
+    name: _holes_left
+    operation: subtract
+
+  _holes_right: # Same stuff agagin
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_ring_home
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_thumb_reach
+      shift: [-0.5U, -0.2U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_index_num
+      shift: [0, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_index_home
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_reachy_num
+      shift: [0U, -0.5U]
+  - what: circle
+    radius: screwSize
+    where:
+      ref: mirror_matrix_reachy_home
+      shift: [0U, -0.5U]
+  
+  _standoff_right: # And again
+  - what: outline
+    name: _holes_right
+    expand: standoffSize - screwSize
+  - what: outline
+    name: _holes_right
+    operation: subtract
+  
+  plate: # Plate! Rotate the correct keys. Doesnt really matter because we use square holes. Relevant if we were using fancy shapes
+    - what: outline
+      name: outline
+    - what: outline
+      name: mx_plate_cutout
+      where: /matrix_(?!(?:middle)).*/
+      operation: subtract
+    - what: outline
+      name: mx_plate_cutout
+      where: /matrix_middle/
+      operation: subtract
+      adjust:
+        rotate: 90
+    - what: outline
+      name: _holes_right
+      operation: subtract
+    - what: outline
+      name: _holes_left
+      operation: subtract
+
+  _plate_right:  # Cut left to get right... again again
+  - what: outline
+    name: plate
+  - what: rectangle 
+    size: 10U
+    where:
+      ref: matrix_middle_home
+    operation: subtract
+
+  _plate_left:  # .....
+  - what: outline
+    name: plate
+  - what: rectangle
+    size: 10U
+    operation: subtract
+    where:
+      ref: mirror_matrix_middle_home
+  - what: outline
+    name: _holes_left
+    operation: subtract
+
+  _base_right:  # Construct the case outlines
+  - what: outline
+    name: outline_right
+    expand: wallBuffer
+  _base_left: 
+  - what: outline
+    name: outline_left
+    expand: wallBuffer
+
+cases: # Put it all together and extrude based on params
+  right_case:
+    - name: _base_right
+      extrude: baseHeight
+    - name: outline_right_walls
+      extrude: wallHeight
+    - name: _standoff_right
+      extrude: standoffHeight
+  left_case:
+    - name: _base_left
+      extrude: baseHeight
+    - name: outline_left_walls
+      extrude: wallHeight
+    - name: _standoff_left
+      extrude: standoffHeight
+  right_plate:
+    - name: _plate_right
+      extrude: plateHeight
+  left_plate:
+    - name: _plate_left
+      extrude: plateHeight
+      
+pcbs:
+  plate_right:
+    outlines:
+      main:
+        outline: _plate_right
+  plate_left:
+    outlines:
+      main:
+        outline: _plate_left
+  right:
+    template: kicad8
+    outlines:
+      main:
+        outline: outline_right
+    footprints:
+      mx_hotswap:
+        what: mx
+        where: /^mirror_matrix_(?!(?:middle)).*/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+      # Switches under MCU
+      under_mcu_mx_hotswap:
+        what: mx
+        where: /^mirror_matrix_middle/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+        adjust:
+          rotate: 90
+      diode:
+        what: diode
+        where: /^mirror_matrix_(?!(?:middle)).*/
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -4.5]
+      under_mcu_diode:
+        what: diode
+        where: /^mirror_matrix_middle/
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [4.5, 0]
+          rotate: 90
+      trrs:
+        what: trrs_pj320a
+        params:
+          SL: GND #GND Recommended
+          R1: GP0 #UART0 TX
+          R2: GP1 #UART0 RX 
+          TP: 3V3 #3v3 (OUT) Recommended
+          side: "B" # Back of PCB
+        where:
+          ref: mirror_matrix_inner_bottom
+          shift: [10, -13]
+          rotate: 270
+      mcu:
+        what: pipico
+        params:
+          mounted: "front" # Mounted front, but on the back to save space
+          mountingType: "throughole"
+          pinSilkscreen: false
+        where:
+          ref: mirror_matrix_middle_num
+          shift: [0,-15]
+      hole_center: # HOOOOOOOLES
+        what: mountinghole
+        where:
+          ref: mirror_matrix_ring_home
+          shift: [0U, -0.5U]
+      hole_thumb:
+        what: mountinghole
+        where:
+          ref: mirror_matrix_thumb_reach
+          shift: [-0.5U, -0.2U]
+      hole_index_top:
+        what: mountinghole
+        where:
+          ref: mirror_matrix_index_num
+          shift: [0, -0.5U]
+      hole_index_bottom:
+        what: mountinghole
+        where:
+          ref: mirror_matrix_index_home
+          shift: [0U, -0.5U]
+      hole_outer_top:
+        what: mountinghole
+        where:
+          ref: mirror_matrix_reachy_num
+          shift: [0U, -0.5U]
+      hole_outer_bottom:
+        what: mountinghole
+        where:
+          ref: mirror_matrix_reachy_home
+          shift: [0U, -0.5U]
+      front_text: &text # Flair
+        what: text
+        where: &textWhere
+          ref: mirror_matrix_thumb_tuck
+          shift: [-0.6U, -8]
+          rotate: 3
+        params: &textParams
+          text: NWS was here
+          justify: left
+          h_size: 2.0
+          v_size: 2.0
+          thickness: 0.4
+  left:
+    template: kicad8
+    outlines:
+      main:
+        outline: outline_left
+    footprints:
+      mx_hotswap:
+        what: mx
+        where: /^matrix_(?!(?:middle)).*/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+      # Switches under MCU
+      under_mcu_mx_hotswap:
+        what: mx
+        where: /^matrix_middle/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: true
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+        adjust:
+          rotate: 90
+      diode:
+        what: diode
+        where: /^matrix_(?!(?:middle)).*/
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -4.5]
+      under_mcu_diode:
+        what: diode
+        where: /^matrix_middle/
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [4.5, 0]
+          rotate: 90
+      trrs:
+        what: trrs_pj320a
+        params:
+          SL: GND #GND
+          R1: GP0 #UART0 TX
+          R2: GP1 #UART0 RX 
+          TP: 3V3 #3v3 (OUT)
+          side: "B"
+        where:
+          ref: matrix_inner_bottom
+          shift: [10, -13]
+          rotate: 270
+      mcu:
+        what: pipico
+        params:
+          mounted: "front"
+          mountingType: "throughole"
+          pinSilkscreen: false
+        where:
+          ref: matrix_middle_num
+          shift: [0,-15]
+      hole_center:
+        what: mountinghole
+        where:
+          ref: matrix_ring_home
+          shift: [0U, -0.5U]
+      hole_thumb:
+        what: mountinghole
+        where:
+          ref: matrix_thumb_reach
+          shift: [-0.5U, -0.2U]
+      hole_index_top:
+        what: mountinghole
+        where:
+          ref: matrix_index_num
+          shift: [0, -0.5U]
+      hole_index_bottom:
+        what: mountinghole
+        where:
+          ref: matrix_index_home
+          shift: [0U, -0.5U]
+      hole_outer_top:
+        what: mountinghole
+        where:
+          ref: matrix_outer_num
+          shift: [0U, -0.5U]
+      hole_outer_bottom:
+        what: mountinghole
+        where:
+          ref: matrix_outer_home
+          shift: [0U, -0.5U]
+      # Text
+      front_text: &text
+        what: text
+        where: &textWhere
+          ref: matrix_thumb_tuck
+          shift: [-0.6U, -8]
+          rotate: 3
+        params: &textParams
+          text: NWS was here
+          justify: right
+          h_size: 2.0
+          v_size: 2.0
+          thickness: 0.4
