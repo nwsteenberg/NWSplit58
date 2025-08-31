@@ -4,5 +4,5 @@ A 58 key split keyboard made for Nordic ISO layout. The keyboard layout, case, P
 
 Firmware is done in KMK with the layout being very standard Nordic layout, with additional thumb keys and HomeTab mods to remove the command row. 
 
-Head over i Walkthrough to read about my process of creating the keyboard.
+Head over i [WALKTHROUGH.md](WALKTHROUGH.md) to read about my process of creating the keyboard.
 
