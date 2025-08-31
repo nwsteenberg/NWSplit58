@@ -7,7 +7,7 @@ I have previously used keyboards like Cherry KC 4500, Microsoft Ergonomic Sculpt
 I have the following criteria:
 
  - [X] Ergonomic - Like all the keyboards listed above i want a split design. Maybe even fully seperated so i can move each side to whereever i want.
- - [ ] Orholinear and column-staggered - People praise this grid style quite a lot. It sounds pretty nice so i want to try that.
+ - [X] Orholinear and column-staggered - People praise this grid style quite a lot. It sounds pretty nice so i want to try that.
  - [X] Nordic ISO like layout - I dont want to try and push the extra ISO keys out to different layers.
  - [X] Mechanical and quiet - II want a mechanical keyboard, while not making enemies at the office.
  - [X] Simple look - No exposed MCU or visible PCB 
@@ -28,6 +28,8 @@ Now i can tap it to do ESC (nice for vim usage), and hold for CTRL.
 ##  Ergogen
 
 Next step, and probably the most complex and time consuming is Ergogen. This tool can do pretty much everything for you. From defining your layout, to creating PCB's to sketching out your case in 3d.
+
+### Points / Layout
 
 I started with one of the predefined layouts and added columns, rows and a thumb cluster. Also i tweaked the stagger of each column a bit.
 
@@ -75,4 +77,133 @@ points:
     distance: 250
 ```
 
-Th
+Which looks like this in ergogen:
+
+<img width="901" height="345" alt="Screenshot From 2025-08-31 19-42-06" src="https://github.com/user-attachments/assets/31e8d43a-07ec-4147-aa04-aac7a2c484a2" />
+
+I am using the `U` measurement as that is the proper MX spacing. 
+
+### Outline 
+
+Then create an outline that will become both your PCB and the starting point of the case:
+
+```yaml
+outlines:
+  _outline:
+    - what: rectangle
+      where: true
+      size: U+3
+    - what: rectangle
+      where: /._inner_bottom/
+      bound: true
+      size: U+3
+    - what: rectangle
+      where: /._index_bottom/
+      bound: true
+      size: U
+  _janky_piece:
+    - what: outline
+      name: _outline
+    - what: rectangle
+      where: /.atrix_thumb_tuck/
+      size: [5U, 3U]
+      adjust:
+        shift: [-30, -10]
+    - what: circle
+      radius: 350
+      where:
+        ref: mirror_matrix_thumb_tuck
+        shift: [-3.7, -361.2]
+      operation: subtract
+    - what: circle
+      radius: 350
+      where:
+        ref: matrix_thumb_tuck
+        shift: [-3.7, -361.2]
+      operation: subtract
+    - what: rectangle
+      size: [1U, 10U]
+      where:
+        ref: matrix_outer_bottom
+        shift: [-1U-1.6, 0]
+      operation: subtract
+```
+
+I have created a padding of 3mm to each key and then created a janky piece that fills out the bottom with a nice curve. The resulting outline:
+
+<img width="901" height="345" alt="image" src="https://github.com/user-attachments/assets/bbdfe7d4-e1eb-4a64-bb1c-0bbb8b0a0f5b" />
+
+#### Plate
+
+We need a plate to slot our keys into. This is quite a rabbithole in itself. There are tons of different cuts that people suggest but here we do the most simple. A 14\*14 cutout. 
+The way this is done in ergogen is that i ahve created an outline with a 14*14 rectangle, a 0.5 fillet (corners will be rounded with a 0.5mm radius). The fillet is due to the PCB manufacturer that i use cannot create right angle cuts inside the PCB outline. The thickness of a PCB is normally 1.6 which is perfect for a MX plate which should be around 1.5mm. 
+
+```yaml
+outlines:
+  mx_plate_cutout:
+    - what: rectangle
+      size: 14
+      fillet: 0.5
+  plate:
+    - what: outline
+      name: outline
+    - what: outline
+      name: mx_plate_cutout
+      where: true
+      operation: subtract
+```
+If you have some weird cutout for the MX key you have to make sure that you rotate the cutouts as well if you have rotated your keys.
+
+Then just create a PCB with that outline:
+```yaml
+  left:
+    outlines:
+      main:
+        outline: outline
+```
+
+### PCB
+
+This is probably where you will use most of your time. You will have to move stuff around and spend a bit of time to do adult connect the dots.
+#### MCU
+I have chosen to use a USB-C version of the Pi Pico RP2040. It was cheap, had USB-C and firmware wise the RP2040 is used quite a lot. One thing that is a bit of a pain is its size. Compared to the Pro Micro this MCU is HUGE! 
+
+This is normally not really a problem since you normally place the MCU off to the side of the keys. But nono, i want a simple look without exposed MCU (or a plate convering it up). So i am mounting it directly behind the keyboard matrix. 
+More specifically right behind the middle num, top and home keys. Due to this placement, i have to rotate some keys so that the MX sockets would fit (yep its that tight).
+
+The MCU is mounted right side up, but behind the PCB. This will save a bit of space to not make the keyboard a tall slab.
+
+```yaml
+mcu:
+ what: pipico
+ params:
+   mounted: "front" # Mounted front, but on the back to save space
+   mountingType: "throughole"
+   pinSilkscreen: false
+ where:
+   ref: mirror_matrix_middle_num
+   shift: [0,-15]
+```
+
+#### TRRS
+I knew nothing about how you would make two keyboards talk to each other. With some research i found that people used either TRRS connectors or USB-C. I went for TRRS as it seemed more simple.
+
+A TRRS connector is basically just 4 points of contacts T(Tip) R(Ring1) R(Ring2) S(Sleeve). 
+The way the RP2040 sends information is through the UART TX and RX pins. Connect these two pins to the Ring1 and Ring2 of the TRRS, VCC to the Tip and GND to the Sleeve. 
+
+I have mounted the TRRS connector to the back since we already have to include space for the MCU.
+
+```yaml
+trrs:
+ what: trrs_pj320a
+ params:
+   SL: GND #GND Recommended
+   R1: GP0 #UART0 TX
+   R2: GP1 #UART0 RX 
+   TP: 3V3 #3v3 (OUT) Recommended
+   side: "B" # Back of PCB
+ where:
+   ref: mirror_matrix_inner_bottom
+   shift: [10, -13]
+   rotate: 270
+```
