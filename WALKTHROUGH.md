@@ -10,7 +10,27 @@ I have the following criteria:
  - [X] Orholinear and column-staggered - People praise this grid style quite a lot. It sounds pretty nice so i want to try that.
  - [X] Nordic ISO like layout - I dont want to try and push the extra ISO keys out to different layers.
  - [X] Mechanical and quiet - II want a mechanical keyboard, while not making enemies at the office.
- - [X] Simple look - No exposed MCU or visible PCB 
+ - [X] Simple look - No exposed MCU or visible PCB
+
+# Shopping List
+This is a list of the components i have used with their respective pricing (excluding stuff like solvering irons, mounting screws etc. that you might already have lying around.
+| Component    | Price | Link |
+| -------- | ------- |
+| RP2040 USB-C x2 | $6.8    | https://www.aliexpress.com/item/1005003753933847.html |
+| Diodes  1206 1N4148W T4 | $4   | https://www.aliexpress.com/item/4000685043735.html |
+| MX Hotswap Sockets    | $11    | https://www.aliexpress.com/item/1005007232040760.html |
+| TRRS Connectors    | $5    | https://www.aliexpress.com/item/1005001928651798.html | 
+| MCU Sockets Hotswap    | $2.54    | https://www.aliexpress.com/item/1005006673257121.html | 
+| TRRS Cable    | $3.45    | https://www.aliexpress.com/item/1005006177816125.html | 
+| XDA2 Keys    | $17.25    | https://www.aliexpress.com/item/1005006910173774.html | 
+| PCB    | $23.50    | N/A | 
+| Plate    | $20.7    | N/A | 
+| 3d print    | $10.88    | N/A | 
+| Shipping & Tax   | $22.38    | N/A | 
+| **Total**   | $149.88    |  | 
+
+**Note:** Keep in mind that most of the materials cover more than 1 keyboard. PCB, and plate are 5 pieces minimum, so enough for 5 keyboards. The 3D print is for two boards, and the differnet small components come in way bigger quantities so the price of two complete keyboards would probably be around $200.
+
 
 ## KLE
 
@@ -25,7 +45,7 @@ This is what i was left with:
 I did the changes i could perform to my existing keyboard and i really like the layout. The combined ESC and CTRL on the old useless CAPSLOCK key is a gamechanger. I previously used my left palm to hit CTRL which was pretty awkward. 
 Now i can tap it to do ESC (nice for vim usage), and hold for CTRL.
 
-##  Ergogen
+## Ergogen
 
 Next step, and probably the most complex and time consuming is Ergogen. This tool can do pretty much everything for you. From defining your layout, to creating PCB's to sketching out your case in 3d.
 
@@ -76,6 +96,8 @@ points:
     ref: matrix_pinky_home
     distance: 250
 ```
+
+**Tip:** Name your thumb cluster `matrix_*` so you can refer to one side as matrix* and the other as mirror*
 
 Which looks like this in ergogen:
 
@@ -207,3 +229,19 @@ trrs:
    shift: [10, -13]
    rotate: 270
 ```
+
+#### Finishing the PCB
+
+Last parts of the config are stuff like mounting holes to mount the PCB to a case. Pick some suitable points around the PCB and find a footprint that fits your preference. 
+
+When you have a PCB that is ready you can run the DRC in KiCad. It will tell you that a lot of traces needs to be routed, and hopefully not that many other errors. 
+Make sure that your pads and holes are seperated enough. The DRC will tell you if you really messed up. 
+
+Then you just have to run all the traces (this is where the adult connect the dots come in). It will take quite a long time if this is your first time, and you will redo your design a couple of times.
+When your rats nets is done you should have a PCB that looks something like this:
+
+<img width="1040" height="695" alt="image" src="https://github.com/user-attachments/assets/cedd928f-06d5-4bd7-b192-718fd3fbe1d8" />
+
+0 unrouted traces and a PCB that is ready for manifacturing. Find your preffered seller (or whoever is cheap with decent reviews), and order a set. 
+
+**Tip:** Order PCBs, plates and 3d print from the same seller like pcbway or jlcpcb. The main cost is in shipping so you can save a few bucks if you order it all together.
