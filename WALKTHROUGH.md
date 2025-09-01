@@ -15,7 +15,7 @@ I have the following criteria:
 # Shopping List
 This is a list of the components i have used with their respective pricing (excluding stuff like solvering irons, mounting screws etc. that you might already have lying around.
 | Component    | Price | Link |
-| -------- | ------- |
+| -------- | ------- | ------- |
 | RP2040 USB-C x2 | $6.8    | https://www.aliexpress.com/item/1005003753933847.html |
 | Diodes  1206 1N4148W T4 | $4   | https://www.aliexpress.com/item/4000685043735.html |
 | MX Hotswap Sockets    | $11    | https://www.aliexpress.com/item/1005007232040760.html |
