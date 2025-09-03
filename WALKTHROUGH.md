@@ -17,6 +17,7 @@ This is a list of the components i have used with their respective pricing (excl
 | Component    | Price | Link |
 | -------- | ------- | ------- |
 | RP2040 USB-C x2 | $6.8    | https://www.aliexpress.com/item/1005003753933847.html |
+| Outemu Honey Peach V3 40g Linear Switches | $21.99   | https://www.aliexpress.com/item/1005008882662753.html |
 | Diodes  1206 1N4148W T4 | $4   | https://www.aliexpress.com/item/4000685043735.html |
 | MX Hotswap Sockets    | $11    | https://www.aliexpress.com/item/1005007232040760.html |
 | TRRS Connectors    | $5    | https://www.aliexpress.com/item/1005001928651798.html | 
@@ -27,7 +28,7 @@ This is a list of the components i have used with their respective pricing (excl
 | Plate    | $20.7    | N/A | 
 | 3d print    | $10.88    | N/A | 
 | Shipping & Tax   | $22.38    | N/A | 
-| **Total**   | $149.88    |  | 
+| **Total**   | $171.87    |  | 
 
 **Note:** Keep in mind that most of the materials cover more than 1 keyboard. PCB, and plate are 5 pieces minimum, so enough for 5 keyboards. The 3D print is for two boards, and the differnet small components come in way bigger quantities so the price of two complete keyboards would probably be around $200.
 
@@ -242,6 +243,6 @@ When your rats nets is done you should have a PCB that looks something like this
 
 <img width="1040" height="695" alt="image" src="https://github.com/user-attachments/assets/cedd928f-06d5-4bd7-b192-718fd3fbe1d8" />
 
-0 unrouted traces and a PCB that is ready for manifacturing. Find your preffered seller (or whoever is cheap with decent reviews), and order a set. 
+0 unrouted traces and a PCB that is ready for manifacturing. Find your preferred seller (or whoever is cheap with decent reviews), and order a set. 
 
 **Tip:** Order PCBs, plates and 3d print from the same seller like pcbway or jlcpcb. The main cost is in shipping so you can save a few bucks if you order it all together.
