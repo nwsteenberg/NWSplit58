@@ -19,7 +19,7 @@ This is a list of the components i have used with their respective pricing (excl
 | RP2040 USB-C x2 | $6.8    | https://www.aliexpress.com/item/1005003753933847.html |
 | Outemu Honey Peach V3 40g Linear Switches | $21.99   | https://www.aliexpress.com/item/1005008882662753.html |
 | Diodes  1206 1N4148W T4 | $4   | https://www.aliexpress.com/item/4000685043735.html |
-| MX Hotswap Sockets    | $11    | https://www.aliexpress.com/item/1005007232040760.html |
+| MX Hotswap Sockets    | $5.5    | https://www.aliexpress.com/item/1005007232040760.html |
 | TRRS Connectors    | $5    | https://www.aliexpress.com/item/1005001928651798.html | 
 | MCU Sockets Hotswap    | $2.54    | https://www.aliexpress.com/item/1005006673257121.html | 
 | TRRS Cable    | $3.45    | https://www.aliexpress.com/item/1005006177816125.html | 
@@ -28,7 +28,7 @@ This is a list of the components i have used with their respective pricing (excl
 | Plate    | $20.7    | N/A | 
 | 3d print    | $10.88    | N/A | 
 | Shipping & Tax   | $22.38    | N/A | 
-| **Total**   | $171.87    |  | 
+| **Total**   | $166.37    |  | 
 
 **Note:** Keep in mind that most of the materials cover more than 1 keyboard. PCB, and plate are 5 pieces minimum, so enough for 5 keyboards. The 3D print is for two boards, and the differnet small components come in way bigger quantities so the price of two complete keyboards would probably be around $200.
 
